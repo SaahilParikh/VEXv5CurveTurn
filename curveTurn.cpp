@@ -1,5 +1,5 @@
 //ALL DISTANCE MEASUREMENTS SHOULD BE MADE IN INCHES
-
+//You should look though this code and set the values that are blank to the correct values and fill in functions such as drive and getGyro()
 #define MAX_SPEED 127.0
 #define DRIVE_BASE_WIDTH 10.0 // in Inches
 #define TIME_STEP 0.002 //50Hz
