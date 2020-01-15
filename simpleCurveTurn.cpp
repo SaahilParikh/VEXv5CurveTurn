@@ -9,7 +9,7 @@ void drive(float Left, float Right) {
 
 float simpleCurveTurnLeft(float radius, float targetHeading, float v=MAX_SPEED,float time=TIME_STEP){
 	float kA = radius/(radius + DRIVE_BASE_WIDTH);
-	float vOuter= v 
+	float vOuter= v; 
 	float vInner=kA*v;
 	drive(vInner, vOuter);
 	wait(timeStep, sec);
@@ -17,7 +17,7 @@ float simpleCurveTurnLeft(float radius, float targetHeading, float v=MAX_SPEED,f
 
 float simpleCurveTurnRight(float radius, float targetHeading, float v=MAX_SPEED,float time=TIME_STEP){
         float kA = radius/(radius + DRIVE_BASE_WIDTH);
-        float vOuter= v 
+        float vOuter= v; 
         float vInner=kA*v;
         drive(vOuter, vInner);
         wait(timeStep, sec);
