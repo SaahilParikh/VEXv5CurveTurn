@@ -26,6 +26,7 @@ float vPID(float error, float integral, float derititive, float kP = 1.0, float 
   return kP*error+kI*integral-kD*derititive;
 }
 
+
 void curveTurn(float radius, float targetHeading, bool rightSideLead, float kP = 1.0, float kI = 0.0, float kD = 0.0, float driveBaseWidth = DRIVE_BASE_WIDTH, float timeStep = TIME_STEP){
   float kA = radius/(radius + driveBaseWidth);
   
@@ -56,7 +57,7 @@ void curveTurn(float radius, float targetHeading, bool rightSideLead, float kP =
     }
 
     drive(vLeft, vRight);
-    //wait(timeStep*1000);
+    wait(timeStep, sec);
     pError = error;
   }
 }
