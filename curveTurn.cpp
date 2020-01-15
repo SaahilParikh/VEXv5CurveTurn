@@ -37,7 +37,7 @@ void curveTurn(float radius, float targetHeading, bool rightSideLead, float kP =
 
   float startHeading = getGyro();
 
-  while(gyroReached(targetHeading, startHeading)){
+  while(gyroReached(startHeading, targetHeading)){
     
     error = targetHeading - getGyro();
     integral += error*timeStep;
