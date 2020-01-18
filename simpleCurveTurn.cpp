@@ -6,7 +6,7 @@ void drive(float Left, float Right) {
   // driveFunction(*args);
 }
 
-void simpleCurveTurnLeft(float radius, float t, float v=MAX_SPEED){
+void simpleCurveTurnLeft(float radius, float t, float v){
 	float kA = radius/(radius + DRIVE_BASE_WIDTH);
 	float vOuter= v; 
 	float vInner=kA*v;
@@ -14,7 +14,7 @@ void simpleCurveTurnLeft(float radius, float t, float v=MAX_SPEED){
 	wait(t, sec);
 }
 
-void simpleCurveTurnRight(float radius, float t, float v=MAX_SPEED){
+void simpleCurveTurnRight(float radius, float t, float v){
         float kA = radius/(radius + DRIVE_BASE_WIDTH);
         float vOuter= v; 
         float vInner=kA*v;
