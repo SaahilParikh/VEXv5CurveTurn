@@ -1,8 +1,12 @@
 //ALL DISTANCE MEASUREMENTS SHOULD BE MADE IN INCHES
 //You should look though this code and set the values that are blank to the correct values and fill in functions such as drive and getGyro()
-#define MAX_SPEED 127.0
+#define MAX_PERCENT 80 //UNDER LOAD MOTORS DO NOT RUN AT TRUE SPEED. RESEMBLES A BOUND FUNCTION
 #define DRIVE_BASE_WIDTH 10.0 // in Inches
-#define TIME_STEP 0.002 //50Hz
+#define TIME_STEP 0.02 //50Hz
+
+float sgn(float num){
+	return num > 0 ? 1.0 : (num < 0 ? -1 : 0)
+}
 
 void drive(float Left, float Right) {
   // Define driveFunction
@@ -22,16 +26,17 @@ bool gyroReached(float start, float Target){
   }
 }
 
-float vPID(float error, float integral, float derititive, float kP = 1.0, float kI = 0.0, float kD = 0.0, float timeStep = TIME_STEP){
-  return kP*error+kI*integral-kD*derititive;
-}
 
-
-void curveTurn(float radius, float targetHeading, bool rightSideLead, float kP = 1.0, float kI = 0.0, float kD = 0.0, float driveBaseWidth = DRIVE_BASE_WIDTH, float timeStep = TIME_STEP){
+void curveTurn(float radius, float targetHeading, bool rightSideLead, float driveBaseWidth = DRIVE_BASE_WIDTH, float timeStep = TIME_STEP){
   float kA = radius/(radius + driveBaseWidth);
   
+  float kP = 1.0;
+  float kI = 0.0;
+  float kD = 0.0;
+
   float pError = 0;
   float error; 
+
   float integral = 0;
   float derivitive;
   float vOuter, vInner, vRight, vLeft;
@@ -44,7 +49,12 @@ void curveTurn(float radius, float targetHeading, bool rightSideLead, float kP =
     integral += error*timeStep;
     derivitive = (error-pError)/timeStep;
 
-    vOuter = vPID(error, integral, derivitive, kP, kI, kD, timeStep);
+    vOuter = kP*error+kI*integral+kD*derivitive;
+
+    if (abs(vOuter) > MAX_PERCENT){
+	vOuter = sgn(vOuter)*MAX_PERCENT;
+    }
+
     vInner = kA*vOuter;
 
     if(rightSideLead){
@@ -57,15 +67,16 @@ void curveTurn(float radius, float targetHeading, bool rightSideLead, float kP =
     }
 
     drive(vLeft, vRight);
-    wait(timeStep, sec);
     pError = error;
+
+    wait(timeStep, sec);
   }
 }
 
-void curveTurnRight(float radius, float targetHeading, float vOuter = MAX_SPEED, float driveBaseWidth = DRIVE_BASE_WIDTH, float timeStep = TIME_STEP){
-  curveTurn(radius, targetHeading, true, vOuter, driveBaseWidth, timeStep);
+void curveTurnRight(float radius, float targetHeading, float driveBaseWidth = DRIVE_BASE_WIDTH, float timeStep = TIME_STEP){
+  curveTurn(radius, targetHeading, true, driveBaseWidth, timeStep);
 }
 
-void curveTurnLeft(float radius, float targetHeading, float vOuter = MAX_SPEED, float driveBaseWidth = DRIVE_BASE_WIDTH, float timeStep = TIME_STEP){
-  curveTurn(radius, targetHeading, false, vOuter, driveBaseWidth, timeStep);
+void curveTurnLeft(float radius, float targetHeading, float driveBaseWidth = DRIVE_BASE_WIDTH, float timeStep = TIME_STEP){
+  curveTurn(radius, targetHeading, false,  driveBaseWidth, timeStep);
 }
