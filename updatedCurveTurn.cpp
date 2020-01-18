@@ -4,12 +4,14 @@
 #define DRIVE_BASE_WIDTH 10.0 // in Inches
 #define TIME_STEP 0.02 //50Hz
 
-#define curveTurnkP = 1.0
-#define curveTurnkI = 0.0
-#define curveTurnkD = 0.0
+#define curveTurnkP 1.0
+#define curveTurnkI 0.0
+#define curveTurnkD 0.0
+
+#define CURVE_TURN_THRESH 2
 
 float sgn(float num){
-	return num > 0 ? 1.0 : (num < 0 ? -1 : 0);
+	return num > 0 ? 1 : (num < 0 ? -1 : 0);
 }
 
 void drive(float Left, float Right) {
@@ -21,15 +23,12 @@ float getGyro(){
   return 0; //myGyro.value(deg); // Change GyroGetter Function to get gyro degree 
 }
 
-bool gyroReached(float start, float Target){
-  if(start < Target){
-    return (getGyro() <= Target);
-  }
-  else{
-    return (getGyro() >= Target);
-  }
+bool gyroThresh(float Target, float thresh=THRESH){
+	if(abs(Target-getGyro()) <= thresh){
+		return true;
+	}
+	return false;
 }
-
 
 void curveTurn(float radius, float targetHeading, bool rightSideLead, float driveBaseWidth = DRIVE_BASE_WIDTH, float timeStep = TIME_STEP){
   float kA = radius/(radius + driveBaseWidth);
@@ -43,7 +42,9 @@ void curveTurn(float radius, float targetHeading, bool rightSideLead, float driv
 
   float startHeading = getGyro();
 
-  while(gyroReached(startHeading, targetHeading)){
+  int count = 0;
+
+  while(count < CURVE_TURN_COUNT){
     
     error = targetHeading - getGyro();
     integral += error*timeStep;
@@ -61,6 +62,7 @@ void curveTurn(float radius, float targetHeading, bool rightSideLead, float driv
       vRight = vOuter;
       vLeft = vInner;
     }
+
     else{
       vRight = vInner;
       vLeft = vOuter;
@@ -68,6 +70,14 @@ void curveTurn(float radius, float targetHeading, bool rightSideLead, float driv
 
     drive(vLeft, vRight);
     pError = error;
+
+    if(gyroThresh(targetHeading)){
+    	count++;
+	//50msec*2 = tenth a second
+    }
+    else{
+	count = 0;
+    }
 
     wait(timeStep, sec);
   }
