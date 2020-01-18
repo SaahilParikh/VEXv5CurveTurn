@@ -4,8 +4,12 @@
 #define DRIVE_BASE_WIDTH 10.0 // in Inches
 #define TIME_STEP 0.02 //50Hz
 
+#define curveTurnkP = 1.0
+#define curveTurnkI = 0.0
+#define curveTurnkD = 0.0
+
 float sgn(float num){
-	return num > 0 ? 1.0 : (num < 0 ? -1 : 0)
+	return num > 0 ? 1.0 : (num < 0 ? -1 : 0);
 }
 
 void drive(float Left, float Right) {
@@ -29,10 +33,6 @@ bool gyroReached(float start, float Target){
 
 void curveTurn(float radius, float targetHeading, bool rightSideLead, float driveBaseWidth = DRIVE_BASE_WIDTH, float timeStep = TIME_STEP){
   float kA = radius/(radius + driveBaseWidth);
-  
-  float kP = 1.0;
-  float kI = 0.0;
-  float kD = 0.0;
 
   float pError = 0;
   float error; 
@@ -49,7 +49,7 @@ void curveTurn(float radius, float targetHeading, bool rightSideLead, float driv
     integral += error*timeStep;
     derivitive = (error-pError)/timeStep;
 
-    vOuter = kP*error+kI*integral+kD*derivitive;
+    vOuter = curveTurnkP*error+curveTurnkI*integral+curveTurnkD*derivitive;
 
     if (abs(vOuter) > MAX_PERCENT){
 	vOuter = sgn(vOuter)*MAX_PERCENT;
