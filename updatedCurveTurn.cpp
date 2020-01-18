@@ -5,7 +5,7 @@
 #define TIME_STEP 0.02 //50Hz
 
 float sgn(float num){
-	return num > 0 ? 1.0 : (num < 0 ? -1 : 0)
+	return num > 0 ? 1.0 : (num < 0 ? -1 : 0);
 }
 
 void drive(float Left, float Right) {
